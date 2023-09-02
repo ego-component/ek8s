@@ -103,17 +103,20 @@ func (reg *Component) ListServices(ctx context.Context, t eregistry.Target) (ser
 // WatchServices watch service change event, then return address list
 func (reg *Component) WatchServices(ctx context.Context, t eregistry.Target) (chan eregistry.Endpoints, error) {
 	appName, port, err := getAppnameAndPort(t.Endpoint)
+	elog.Debug("WatchServices app info", elog.String("app", appName), elog.String("port", port))
 	if err != nil {
 		return nil, err
 	}
 
 	app, err := reg.client.NewWatcherApp(ctx, appName, reg.config.Kind)
 	if err != nil {
+		reg.logger.Error("NewWatcherApp fail", elog.FieldErr(err))
 		return nil, err
 	}
 
 	svcs, err := reg.ListServices(ctx, t)
 	if err != nil {
+		reg.logger.Error("ListServices fail", elog.FieldErr(err))
 		return nil, err
 	}
 	var al = &eregistry.Endpoints{
@@ -138,18 +141,21 @@ func (reg *Component) WatchServices(ctx context.Context, t eregistry.Target) (ch
 					addrs = append(addrs, ip+":"+port)
 				}
 				reg.addAddrList(al, addrs)
+				reg.logger.Debug("handle added event succ", zap.String("appName", appName), zap.Any("addrs", addrs))
 			case watch.Deleted:
 				addrs := make([]string, 0)
 				for _, ip := range info.IPs {
 					addrs = append(addrs, ip+":"+port)
 				}
 				reg.deleteAddrList(al, addrs)
+				reg.logger.Debug("handle deleted event succ", zap.String("appName", appName), zap.Any("addrs", addrs))
 			case watch.Modified:
 				addrs := make([]string, 0)
 				for _, ip := range info.IPs {
 					addrs = append(addrs, ip+":"+port)
 				}
 				reg.updateAddrList(al, addrs)
+				reg.logger.Debug("handle modified event succ", zap.String("appName", appName), zap.Any("addrs", addrs))
 			}
 			out := al.DeepCopy()
 			reg.logger.Info("update addresses", zap.String("appName", appName), zap.Any("addresses", *out))

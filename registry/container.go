@@ -29,6 +29,7 @@ func Load(key string) *Container {
 		c.logger.Panic("parse config error", elog.FieldErr(err), elog.FieldKey(key))
 		return c
 	}
+	c.logger.Debug("config info", elog.String("name", c.name), elog.Any("config", c.config))
 	c.logger = c.logger.With(elog.FieldComponentName(key))
 	c.name = key
 	return c
