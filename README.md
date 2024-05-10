@@ -17,26 +17,45 @@
 ## 3 K8S配置
 ```go
 type Config struct {
-    Addr                    string     // 地址
-    Debug                   bool       // 调试信息
-    Token                   string     // token信息
-    Namespaces              []string   // 命名空间列表
-    DeploymentPrefix        string     // 前缀
-    TLSClientConfigInsecure bool       // 是否开启tls
+    // Addr k8s API Server 地址
+    Addr string
+    // Debug 是否开启debug模式
+    Debug bool
+    // Token k8s API Server 请求token
+    Token string
+    // Token k8s API Server 请求token file
+    // 本地运行时需要将 tokenFile 参数显式的设置为 ""
+    TokenFile string
+    // Namespaces 需要进行查询和监听的 Namespace 列表
+    Namespaces []string
+    // DeploymentPrefix 命名前缀
+    DeploymentPrefix string
+    // TLSClientConfigInsecure 是否启用 TLS
+    TLSClientConfigInsecure bool
 }
 ```
 
 ## 4 默认配置
 * host: KUBERNETES_SERVICE_HOST 环境变量
 * port: KUBERNETES_SERVICE_PORT 环境变量
-* token: /var/run/secrets/kubernetes.io/serviceaccount/token 文件路径
+* token: /var/run/secrets/kubernetes.io/serviceaccount/token 文件中值
+* tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token 文件路径
 
 ## 5 根据K8S信息，调用gRPC
 ### 5.1 K8S配置
 ```toml
 [k8s]
-addr=""
-token=""
+# k8s API Server 地址
+addr="https://$API_SERVER_ADDR"
+# Debug 是否开启debug模式
+debug = true
+# Token k8s API Server 请求token
+token="$API_SERVER_TOKEN"
+# Token k8s API Server 请求token file
+# 本地运行时：需要显式设置 tokenFile = ""
+# 集群模式下运行时：需要 tokenFile = "/var/run/secrets/kubernetes.io/serviceaccount/token" 或释掉 tokenFile 这个 key
+tokenFile = ""
+# Namespaces 需要进行查询和监听的 Namespace 列表
 namespaces=["default"]
 
 [grpc.test]

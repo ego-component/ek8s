@@ -21,6 +21,12 @@ func WithToken(token string) Option {
 	}
 }
 
+func WithTokenFile(tokenFile string) Option {
+	return func(c *Container) {
+		c.config.TokenFile = tokenFile
+	}
+}
+
 func WithNamespaces(namespaces []string) Option {
 	return func(c *Container) {
 		c.config.Namespaces = namespaces

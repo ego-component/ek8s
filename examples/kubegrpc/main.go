@@ -22,9 +22,7 @@ func main() {
 
 func invokerGrpc() error {
 	// 构建k8s registry，并注册为grpc resolver
-	registry.Load("registry").Build(
-		registry.WithClient(ek8s.Load("k8s").Build()),
-	)
+	registry.DefaultContainer().Build(registry.WithClient(ek8s.Load("k8s").Build()))
 	// 构建gRPC.ClientConn组件
 	grpcConn := egrpc.Load("grpc.test").Build()
 	// 构建gRPC Client组件
