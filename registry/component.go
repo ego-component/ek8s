@@ -92,10 +92,10 @@ func (reg *Component) ListServices(ctx context.Context, t eregistry.Target) (ser
 				}
 			}
 		}
-		elog.Debug("ListServices", zap.Any("services", services))
+		reg.logger.Debug("ListServices", zap.Any("services", services))
 		return
 	default:
-		elog.Error("list services error", zap.String("kind", reg.config.Kind))
+		reg.logger.Error("list services error", zap.String("kind", reg.config.Kind))
 	}
 	return
 }
@@ -103,7 +103,7 @@ func (reg *Component) ListServices(ctx context.Context, t eregistry.Target) (ser
 // WatchServices watch service change event, then return address list
 func (reg *Component) WatchServices(ctx context.Context, t eregistry.Target) (chan eregistry.Endpoints, error) {
 	appName, port, err := getAppnameAndPort(t.Endpoint)
-	elog.Debug("WatchServices app info", elog.String("app", appName), elog.String("port", port))
+	reg.logger.Debug("WatchServices app info", elog.String("app", appName), elog.String("port", port))
 	if err != nil {
 		return nil, err
 	}
