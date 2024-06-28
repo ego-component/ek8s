@@ -41,6 +41,16 @@ type KubernetesEvent struct {
 
 // New ...
 func newComponent(name string, config *Config, logger *elog.Component) *Component {
+	// 如果没有开启，那么返回一个nil的k8s client，这个时候，认为业务方不会使用这个组件。
+	// 这个目的是为了docker-compose这类业务，虽然使用了同样代码，enable=false，让业务不panic
+	if !config.Enable {
+		return &Component{
+			name:      name,
+			config:    config,
+			logger:    logger,
+			Clientset: nil,
+		}
+	}
 	client, err := kubernetes.NewForConfig(config.toRestConfig())
 	if err != nil {
 		logger.Panic("new component err", elog.FieldErr(err))

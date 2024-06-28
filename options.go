@@ -9,12 +9,6 @@ func WithAddr(addr string) Option {
 	}
 }
 
-func WithDebug(debug bool) Option {
-	return func(c *Container) {
-		c.config.Debug = debug
-	}
-}
-
 func WithToken(token string) Option {
 	return func(c *Container) {
 		c.config.Token = token
