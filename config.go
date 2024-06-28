@@ -13,8 +13,8 @@ import (
 type Config struct {
 	// Addr k8s API Server 地址
 	Addr string
-	// Debug 是否开启debug模式
-	Debug bool
+	// 是否开启，默认开启
+	Enable bool
 	// Token k8s API Server 请求token
 	Token string
 	// Token k8s API Server 请求token file
@@ -33,6 +33,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Addr:                    inClusterAddr(),
+		Enable:                  true,
 		Token:                   inClusterToken(),
 		Namespaces:              []string{inClusterNamespace()},
 		TLSClientConfigInsecure: true,
